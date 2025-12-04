@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Easy Math — Learn, Play & Earn</title>
+<style>
+  :root{
+    --bg:#f7fbff;--card:#fff;--accent:#ff6f61;--accent2:#4f46e5;--muted:#6b7280;--green:#10b981;
+    --gold:#f6c84c;--pink:#ff9fb1;
+  }
+  *{box-sizing:border-box;font-family: 'Poppins', 'Comic Sans MS', Arial, sans-serif}
+  body{margin:0;background:linear-gradient(180deg,#e8f6ff 0%,var(--bg) 100%);color:#073044;min-height:100vh}
+  header{background:linear-gradient(90deg,#4f46e5,#60a5fa);color:white;padding:18px;border-bottom-left-radius:18px;border-bottom-right-radius:18px}
+  .wrap{max-width:1100px;margin:12px auto;padding:12px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{margin:0;font-size:22px}
+  .userCard{background:var(--card);padding:8px 12px;border-radius:12px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(16,24,40,0.06)}
+  .avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#ffd6a5,#ff6f61);display:flex;align-items:center;justify-content:center;font-weight:700;color:#5a2b0f}
+  nav{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  nav button{padding:8px 12px;border-radius:12px;border:0;background:transparent;color:rgba(255,255,255,0.95);cursor:pointer;font-weight:700;transition:all .15s}
+  nav button.active{background:rgba(255,255,255,0.12);transform:translateY(-2px)}
+  main{display:grid;grid-template-columns:1fr 340px;gap:18px;margin-top:18px}
+  .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 10px 30px rgba(16,24,40,0.06)}
+  aside .card{position:sticky;top:18px}
+  label{display:block;font-size:13px;color:var(--muted);margin-top:8px}
+  input[type=text],select,input[type=number]{width:100%;padding:10px;border-radius:10px;border:1px solid #e6eef8}
+  .btn{background:var(--accent2);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+  .btn.secondary{background:#fff;border:1px solid #e6eef8;color:var(--accent2)}
+  .btn.warn{background:var(--accent);color:white}
+  .chapter{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid #f1f5f9;margin-top:8px;transition:transform .12s}
+  .chapter:hover{transform:translateY(-4px)}
+  .meta{font-size:13px;color:var(--muted)}
+  .quiz-question{font-size:20px;margin-top:8px}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .option-btn{padding:10px;border-radius:10px;border:1px solid #e6eef8;background:#fff;cursor:pointer;transition:transform .12s}
+  .option-btn:hover{transform:scale(1.02)}
+  .option-btn.correct{outline:3px solid rgba(16,185,129,0.15)}
+  .option-btn.wrong{outline:3px solid rgba(239,68,68,0.12)}
+  .hearts{display:flex;gap:6px}
+  .heart{width:30px;height:30px;background:linear-gradient(180deg,#ffd1d1,#ffc4c4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#b91c1c;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  .reward-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px dashed #e6eef8;margin-top:8px}
+  .mascot{width:120px;height:120px;border-radius:18px;background:linear-gradient(180deg,#fff6e6,#fff1f1);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(99,102,241,0.12)}
+  .mascot svg{width:90px;height:90px}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .mascot{animation:bounce 2.2s infinite}
+  .mascot.shake{animation:shake 0.6s}
+  @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)}}
+  .badge{display:inline-block;background:linear-gradient(90deg,#fff9ec,#fff3e6);padding:8px;border-radius:8px;margin:6px;border:1px solid #f3d9b6}
+  .confetti{position:fixed;left:0;top:0;pointer-events:none;width:100%;height:100%;z-index:9999}
+  .confetti-piece{position:absolute;width:10px;height:14px;opacity:0.95}
+  .practice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .practice-tile{background:linear-gradient(180deg,#fff,#f8fbff);border-radius:12px;padding:12px;text-align:center;border:1px solid #eef4ff;cursor:pointer;transition:transform .12s}
+  .practice-tile:hover{transform:translateY(-6px)}
+  .small{font-size:12px;color:var(--muted)}
+  .popup { display: none; position: fixed; top: 0; left: 0; height: 100vh; width: 100%; background: rgba(0,0,0,0.45); justify-content: center; align-items: center; z-index: 2000; }
+  .popup-box { background: white; padding: 18px; border-radius: 14px; max-width: 420px; text-align: center; animation: pop 0.28s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+  .popup-box .explain { font-size: 14px; color: var(--muted); margin-top: 8px; text-align:left; }
+  .hintBox{background:#fffbe6;border:1px dashed #ffd880;padding:8px;border-radius:8px;margin-top:8px}
+  @keyframes pop { 0% { transform: scale(0.7); opacity: 0 } 100% { transform: scale(1); opacity:1 } }
+  .game-area{height:360px;border-radius:12px;background:linear-gradient(180deg,#fff,#f4fbff);border:1px solid #e6f0ff;display:flex;align-items:center;justify-content:center;position:relative}
+  .block{width:46px;height:46px;border-radius:8px;background:#ffd6a5;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.08);position:absolute}
+  @media (max-width:980px){main{grid-template-columns:1fr}aside .card{position:static}}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div>
+        <h1>Easy Math — Playful Learning</h1>
+        <div style="opacity:0.95" class="small">Syllabus-based quizzes • Rewards • Practice • Games</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="userCard" id="topUser">
+          <div class="avatar" id="avatarInitial">G</div>
+          <div>
+            <div id="topName" style="font-weight:800">Guest</div>
+            <div style="font-size:12px;color:var(--muted)" id="topMeta">Not signed in</div>
+          </div>
+        </div>
+        <div>
+          <button class="btn secondary" id="discordBtn" onclick="window.open('https://discord.gg/placeholder','_blank')">Join our Discord</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <nav id="mainNav" style="display:flex">
+        <button class="active" data-section="home">Home</button>
+        <button data-section="profile">Profile</button>
+        <button data-section="syllabus">Syllabus</button>
+        <button data-section="quiz">Pop Quiz</button>
+        <button data-section="practice">Practice</button>
+        <button data-section="games">Games</button>
+        <button data-section="rewards">Rewards</button>
+        <button data-section="achievements">Achievements</button>
+        <button data-section="certificate">Certificate</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <main>
+      <!-- HOME -->
+      <section id="home" class="card">
+        <div style="display:flex;gap:16px;align-items:center">
+          <div style="flex:1">
+            <h2 id="welcomeTitle">Welcome to Easy Math!</h2>
+            <p class="small" id="welcomeSub">Sign in to personalize your learning experience.</p>
+
+            <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:end">
+              <div>
+                <label>Choose Grade</label>
+                <select id="homeGrade"></select>
+              </div>
+              <div>
+                <label>Difficulty</label>
+                <select id="homeDiff"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select>
+              </div>
+              <div>
+                <label>Quick Action</label>
+                <button class="btn" id="quickQuizBtn">Quick Pop Quiz</button>
+              </div>
+            </div>
+
+            <div style="margin-top:16px;display:flex;gap:12px;align-items:center">
+              <div class="mascot" id="mascot">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="30" r="18" fill="#fff3e0" stroke="#ffb39b" stroke-width="2"/>
+                  <circle cx="24" cy="26" r="3" fill="#5a2b0f"/><circle cx="40" cy="26" r="3" fill="#5a2b0f"/>
+                  <path d="M24 36c3 4 13 4 16 0" stroke="#5a2b0f" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </svg>
+              </div>
+
+              <div style="flex:1">
+                <div style="font-weight:800">Buddy: Small daily practice — big rewards! 🎉</div>
+                <div class="small" style="margin-top:6px">Complete chapters to earn <strong>10 coins</strong>. Pass quizzes to earn bonus coins and certificates.</div>
+              </div>
+            </div>
+          </div>
+
+          <aside style="width:320px">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="small">Coins</div>
+                  <div id="coins" style="font-weight:900;font-size:22px">0</div>
+                </div>
+                <div>
+                  <div class="small">Hearts</div>
+                  <div class="hearts" id="heartsContainer"></div>
+                </div>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <button class="btn" id="practiceNowBtn">Practice</button>
+                <button class="btn secondary" id="openRewardsBtn">Rewards</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:12px">
+              <h4 style="margin:0">Today's Tip</h4>
+              <div class="small" style="margin-top:8px">Choose a short pop quiz to warm up. Try Timed Sprints for extra coins.</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="profile" class="card" style="display:none">
+        <h2>Profile</h2>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="avatar" id="profileAvatar">P</div>
+          <div>
+            <div style="font-weight:800" id="profileNameDisplay">Guest</div>
+            <div class="small" id="profileMetaDisplay">Not signed in</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Student name</label>
+          <input id="inpName" type="text" placeholder="Your name"/>
+          <label>School name</label>
+          <input id="inpSchool" type="text" placeholder="School"/>
+          <label>Syllabus</label>
+          <select id="inpSyllabus"><option>CBSE</option><option>ICSE</option><option>State Board</option></select>
+          <label>Grade</label>
+          <select id="inpGrade"></select>
+
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn" id="saveProfile">Save Profile</button>
+            <button class="btn secondary" id="clearProfile">Clear Profile</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SYLLABUS -->
+      <section id="syllabus" class="card" style="display:none">
+        <h2>Syllabus — Grade <span id="syllGradeLabel">1</span></h2>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="flex:1">
+            <label>Grade</label>
+            <select id="syllGradeSelect"></select>
+          </div>
+          <div style="flex:1">
+            <label>Filter</label>
+            <select id="syllFilter"><option>All</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
+          </div>
+          <div style="align-self:end">
+            <button class="btn" id="addChapter">Add Chapter</button>
+          </div>
+        </div>
+
+        <div id="chaptersList" style="margin-top:12px"></div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="quiz" class="card" style="display:none">
+        <h2>Pop Quiz</h2>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div><label>Grade</label><select id="quizGrade"></select></div>
+          <div><label>Chapter (Optional)</label><select id="quizChapter"><option value="">Any</option></select></div>
+          <div><label>Difficulty</label><select id="quizDiff"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
+          <div><label>Questions</label><select id="quizNumber"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div>
+          <div style="align-self:end"><button class="btn" id="startQuiz">Start</button></div>
+        </div>
+
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+          <button class="btn secondary" id="hintBtn">Hint</button>
+          <div class="small" id="quizHintText" style="margin-left:8px"></div>
+          <div style="margin-left:auto" id="quizStatus"></div>
+        </div>
+        <div id="quizArea" style="margin-top:12px"></div>
+      </section>
+
+      <!-- PRACTICE -->
+      <section id="practice" class="card" style="display:none">
+        <h2>Practice Zone</h2>
+        <p class="small">Choose a topic and practice in fun ways.</p>
+
+        <h4 style="margin-top:12px">Topics</h4>
+        <div class="practice-grid" id="practiceTopics"></div>
+
+        <div id="practiceBox" style="margin-top:12px"></div>
+      </section>
+
+      <!-- GAMES -->
+      <section id="games" class="card" style="display:none">
+        <h2>Games — Fun Play</h2>
+        <p class="small">Play mini-games for a short time — lock applies until you complete a chapter.</p>
+
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="flex:1">
+            <label>Session length (minutes)</label>
+            <select id="gameLength"><option>5</option><option selected>10</option><option>15</option></select>
+            <div style="margin-top:8px">
+              <button class="btn" id="startGameBtn">Start Game</button>
+              <button class="btn secondary" id="stopGameBtn">Stop Game</button>
+            </div>
+            <div class="small" style="margin-top:8px" id="gameMsg"></div>
+          </div>
+          <div style="width:400px">
+            <div class="game-area" id="gameArea">
+              <div class="small" id="gameHUD">Press Start to begin</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REWARDS -->
+      <section id="rewards" class="card" style="display:none">
+        <h2>Rewards Store</h2>
+        <div class="reward-item"><div><strong>RD Sharma Book</strong><div class="small">Practice + theory</div></div><div style="text-align:right"><div>Cost: <strong>50</strong> coins</div><button class="btn secondary redeem" data-key="rdsharma">Redeem</button></div></div>
+        <div class="reward-item"><div><strong>RS Aggarwal Book</strong><div class="small">Exercises pack</div></div><div style="text-align:right"><div>Cost: <strong>50</strong> coins</div><button class="btn secondary redeem" data-key="rsag">Redeem</button></div></div>
+        <div class="reward-item"><div><strong>Science Museum Trip</strong><div class="small">Educational outing</div></div><div style="text-align:right"><div>Cost: <strong>180</strong> coins</div><button class="btn secondary redeem" data-key="scim">Redeem</button></div></div>
+        <div class="reward-item"><div><strong>Adventure Park</strong><div class="small">Fun day out</div></div><div style="text-align:right"><div>Cost: <strong>220</strong> coins</div><button class="btn secondary redeem" data-key="adv">Redeem</button></div></div>
+        <div class="reward-item"><div><strong>Gravity Museum Trip</strong><div class="small">Science & wonder</div></div><div style="text-align:right"><div>Cost: <strong>200</strong> coins</div><button class="btn secondary redeem" data-key="grav">Redeem</button></div></div>
+        <div class="reward-item"><div><strong>Worksheets Pack</strong><div class="small">Mixed worksheets</div></div><div style="text-align:right"><div>Cost: <strong>120</strong> coins</div><button class="btn secondary redeem" data-key="ws">Redeem</button></div></div>
+
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn" id="surpriseBtn">Get Surprise (random)</button>
+          <div id="redeemMsg" class="small" style="align-self:center;color:var(--muted)"></div>
+        </div>
+      </section>
+
+      <!-- ACHIEVEMENTS -->
+      <section id="achievements" class="card" style="display:none">
+        <h2>Achievements & Mistakes Notebook</h2>
+        <div id="achGrid" style="margin-top:10px"></div>
+
+        <h4 style="margin-top:12px">Mistakes Notebook</h4>
+        <div class="small">All wrong answers are saved here so you can revise them.</div>
+        <div id="mistakesList" style="margin-top:8px"></div>
+        <div style="margin-top:10px"><button class="btn" id="reviseMistakesBtn">Revise Mistakes</button></div>
+      </section>
+
+      <!-- CERTIFICATE -->
+      <section id="certificate" class="card" style="display:none">
+        <h2>Certificate</h2>
+        <div style="text-align:center;margin-top:12px">
+          <div style="border:2px dashed var(--accent2);padding:18px;border-radius:12px;display:inline-block;background:linear-gradient(180deg,#fff,#fff8f1)">
+            <h3>Certificate of Achievement</h3>
+            <div class="small">Awarded to</div>
+            <div style="font-weight:800;font-size:20px" id="certName">Student</div>
+            <div class="small" style="margin-top:6px">For: <span id="certFor">Achievement</span></div>
+            <div style="margin-top:10px"><button class="btn" id="downloadCertBtn">Download (SVG)</button></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <aside>
+      <div class="card">
+        <h4>Quick Actions</h4>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <button class="btn" id="quickToQuiz">Pop Quiz</button>
+          <button class="btn secondary" id="quickToSyll">Syllabus</button>
+          <button class="btn secondary" id="quickToPractice">Practice</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4>Progress</h4>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div class="small">Coins</div><div id="sideCoins" style="font-weight:800;font-size:20px">0</div></div>
+          <div><div class="small">Chapters</div><div id="sideChaps" style="font-weight:800;font-size:20px">0</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;text-align:center">
+        <div class="small">Buddy</div>
+        <div style="margin-top:8px">Complete chapters & quizzes to collect coins and unlock awesome rewards!</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- POPUP (for wrong/correct explanations) -->
+  <div class="popup" id="feedbackPopup">
+    <div class="popup-box" id="feedbackBox">
+      <!-- dynamic -->
+    </div>
+  </div>
+
+  <div class="confetti" id="confettiLayer"></div>
+
+<script>
+/* ===== APP STATE ===== */
+const STORAGE_KEY = 'easyMath_full_v3';
+let app = {
+  user: null,
+  coins: 0,
+  hearts: 5,
+  chaptersDone: 0,
+  achievements: [],
+  badges: [],
+  customChapters: {},
+  mistakes: [], // stored wrong questions {grade, text, correct, choices, explanation, diff, time}
+  gamePlayedOnce: false, // controls locking
+};
+const SAMPLE_SYLLABUS = {
+  1:['Numbers & Counting','Addition basics','Subtraction basics','Shapes','Patterns','Time basics','Money basics','Word problems'],
+  2:['Place value','Addition/Subtraction','Multiplication intro','Division intro','Measurement','Shapes','Data','Story sums'],
+  3:['Numbers','Mult & Div','Fractions intro','Decimals','Time & Money','Perimeter','Area','Word problems'],
+  4:['Large numbers','Factors & Multiples','Decimals','Fractions','Geometry','Angles','Area & Volume','Problem solving'],
+  5:['Number system','Fractions & Decimals','Percentages','Algebra intro','Volume','Geometry','Graphs','Challenging problems'],
+  6:['Integers','Ratio & Proportion','Algebra','Geometry','Mensuration','Data handling','Factors','Percent'],
+  7:['Integers & Rational','Linear eqns','Geometry','Ratio','Mensuration','Algebra','Data','Probability'],
+  8:['Number systems','Algebra','Geometry','Quadrilaterals','Mensuration','Graphs','Pythagoras','Probability'],
+  9:['Number systems','Algebraic expressions','Polynomials','Coordinate geometry','Statistics','Trigonometry','Linear eqns','Probability'],
+ 10:['Real numbers','Polynomials','Triangles','Trigonometry','Circles','Area & Volume','Statistics','Coordinate geometry']
+};
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(app)); }
+function load(){ const s = localStorage.getItem(STORAGE_KEY); if(s){ try{ app = JSON.parse(s); }catch(e){ console.error(e); } } }
+load();
+
+/* ===== UI SECTIONS & NAV ===== */
+const sections = {
+  home: document.getElementById('home'),
+  profile: document.getElementById('profile'),
+  syllabus: document.getElementById('syllabus'),
+  quiz: document.getElementById('quiz'),
+  practice: document.getElementById('practice'),
+  games: document.getElementById('games'),
+  rewards: document.getElementById('rewards'),
+  achievements: document.getElementById('achievements'),
+  certificate: document.getElementById('certificate')
+};
+function showSection(key){
+  Object.values(sections).forEach(s => s.style.display = 'none');
+  if(sections[key]) sections[key].style.display = 'block';
+  document.querySelectorAll('#mainNav button').forEach(b=>b.classList.remove('active'));
+  const btn = document.querySelector(`#mainNav button[data-section="${key}"]`);
+  if(btn) btn.classList.add('active');
+}
+document.getElementById('mainNav').addEventListener('click', (e)=>{ if(e.target.tagName!=='BUTTON') return; const sec = e.target.dataset.section; if(sec) showSection(sec); });
+document.getElementById('quickToQuiz').onclick = ()=> showSection('quiz');
+document.getElementById('quickToSyll').onclick = ()=> showSection('syllabus');
+document.getElementById('quickToPractice').onclick = ()=> showSection('practice');
+document.getElementById('practiceNowBtn').onclick = ()=> showSection('practice');
+document.getElementById('openRewardsBtn').onclick = ()=> showSection('rewards');
+
+/* ===== PROFILE ===== */
+const inpName = document.getElementById('inpName'), inpSchool = document.getElementById('inpSchool'),
+      inpSyllabus = document.getElementById('inpSyllabus'), inpGrade = document.getElementById('inpGrade');
+
+function fillGradeSelects(){
+  ['homeGrade','syllGradeSelect','quizGrade','inpGrade','quizGrade'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return; el.innerHTML=''; for(let g=1;g<=10;g++) el.insertAdjacentHTML('beforeend', `<option value="${g}">${g}</option>`); 
+  });
+}
+fillGradeSelects();
+
+function renderProfile(){
+  document.getElementById('profileNameDisplay').textContent = app.user?.name || 'Guest';
+  document.getElementById('profileMetaDisplay').textContent = app.user ? `${app.user.school||''} • Grade ${app.user.grade||''}` : 'Not signed in';
+  document.getElementById('avatarInitial').textContent = (app.user?.name?.charAt(0) || 'G').toUpperCase();
+  document.getElementById('topName').textContent = app.user?.name || 'Guest';
+  document.getElementById('topMeta').textContent = app.user ? `${app.user.school||''} • Grade ${app.user.grade||''}` : 'Not signed in';
+  inpName.value = app.user?.name || ''; inpSchool.value = app.user?.school || ''; inpSyllabus.value = app.user?.syllabus || 'CBSE'; inpGrade.value = app.user?.grade || '1';
+}
+document.getElementById('saveProfile').addEventListener('click', ()=>{
+  const name = inpName.value.trim(); if(!name){ alert('Please enter name'); return; }
+  app.user = { name, school: inpSchool.value.trim(), syllabus: inpSyllabus.value, grade: inpGrade.value };
+  save(); renderProfile(); renderHeaderStats(); populateQuizChapters(); renderChapters(); renderAchievements(); showSection('home'); toast(`Welcome ${name}!`);
+});
+document.getElementById('clearProfile').addEventListener('click', ()=>{
+  if(confirm('Clear profile and progress?')){ app={ user:null, coins:0, hearts:5, chaptersDone:0, achievements:[], badges:[], customChapters:{}, mistakes:[], gamePlayedOnce:false }; save(); renderProfile(); renderHeaderStats(); renderChapters(); renderAchievements(); toast('Cleared'); showSection('profile'); }
+});
+renderProfile();
+
+/* ===== HEADER STATS ===== */
+function renderHeaderStats(){
+  document.getElementById('coins').textContent = app.coins || 0;
+  document.getElementById('sideCoins').textContent = app.coins || 0;
+  document.getElementById('sideChaps').textContent = app.chaptersDone || 0;
+  const heartsWrap = document.getElementById('heartsContainer'); heartsWrap.innerHTML='';
+  for(let i=0;i<5;i++){ const d=document.createElement('div'); d.className='heart'; d.textContent = (app.hearts||0)>i ? '❤' : '♡'; heartsWrap.appendChild(d); }
+}
+renderHeaderStats();
+
+/* tiny toast */
+function toast(txt, time=1600){ const el=document.createElement('div'); el.textContent=txt; el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.background='rgba(3,48,68,0.95)'; el.style.color='white'; el.style.padding='10px 14px'; el.style.borderRadius='10px'; el.style.zIndex=9999; document.body.appendChild(el); setTimeout(()=>{ el.style.opacity=0; setTimeout(()=>el.remove(),300); },time); }
+
+/* ===== SYLLABUS & CHAPTERS ===== */
+const chaptersList = document.getElementById('chaptersList');
+function renderChapters(){
+  const grade = Number(document.getElementById('syllGradeSelect').value || app.user?.grade || 1);
+  document.getElementById('syllGradeLabel').textContent = grade;
+  chaptersList.innerHTML = '';
+  const core = SAMPLE_SYLLABUS[grade] || [];
+  core.forEach((title, idx) => {
+    const div = document.createElement('div'); div.className='chapter';
+    div.innerHTML = `<div><strong>${title}</strong><div class="small meta">Core chapter</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn secondary" data-grade="${grade}" data-ch="${idx}" onclick="completeChapter(${grade},${idx})">Complete</button>
+        <button class="btn" onclick="startChapterQuiz(${grade},${idx})">Practice</button>
+      </div>`;
+    chaptersList.appendChild(div);
+  });
+  (app.customChapters[grade] || []).forEach((title, idx) => {
+    const div = document.createElement('div'); div.className='chapter';
+    div.innerHTML = `<div><strong>${title}</strong><div class="small meta">Custom</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn secondary" onclick="completeCustomChapter(${grade},${idx})">Complete</button>
+        <button class="btn" onclick="startChapterQuiz(${grade},'c-${idx}')">Practice</button>
+      </div>`;
+    chaptersList.appendChild(div);
+  });
+}
+document.getElementById('syllGradeSelect').addEventListener('change', renderChapters);
+document.getElementById('addChapter').addEventListener('click', ()=>{
+  const g = document.getElementById('syllGradeSelect').value;
+  const t = prompt('Enter custom chapter title for Grade ' + g + ':');
+  if(t){ app.customChapters[g] = app.customChapters[g] || []; app.customChapters[g].push(t); save(); renderChapters(); toast('Added chapter'); populateQuizChapters(); }
+});
+function completeChapter(grade, idx){
+  app.coins = (app.coins||0)+10; app.chaptersDone = (app.chaptersDone||0)+1; app.achievements.push(`Completed chapter (G${grade})`); save(); renderHeaderStats(); renderAchievements(); toast('+10 coins — chapter complete');
+  // unlock games after completing at least one chapter
+  if(app.chaptersDone>=1) app.gamePlayedOnce = app.gamePlayedOnce || false; // if previously used, kept
+}
+function completeCustomChapter(grade, idx){
+  completeChapter(grade, idx);
+}
+renderChapters();
+
+/* ===== QUIZ ENGINE + LEARN FROM WRONG ===== */
+let quizState = null; // {grade, chapter, diff, total, index, correct, questions[], reviseMode?}
+function updateQuizChapterOptions(){
+  const g = document.getElementById('quizGrade').value || app.user?.grade || '1';
+  const ch = document.getElementById('quizChapter'); ch.innerHTML = '<option value="">Any</option>';
+  (SAMPLE_SYLLABUS[g] || []).forEach((t,i)=> ch.insertAdjacentHTML('beforeend', `<option value="${i}">${t}</option>`));
+  (app.customChapters[g] || []).forEach((t,i)=> ch.insertAdjacentHTML('beforeend', `<option value="c-${i}">${t} (custom)</option>`));
+}
+document.getElementById('quizGrade').addEventListener('change', updateQuizChapterOptions);
+
+function genQuestion(grade, difficulty, chapterIndex){
+  const g=Number(grade);
+  const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+  let q={text:'',answer:0,choices:[],explanation:'',diff:difficulty};
+  const df = difficulty==='easy'?1:(difficulty==='medium'?2:3);
+  if(g<=3){
+    const a=rnd(1,10*df), b=rnd(1,10*df);
+    if(Math.random()<0.6){ q.text=`${a} + ${b} = ?`; q.answer=a+b; q.explanation = `Add ${a} and ${b} to get ${q.answer}.`;}
+    else{ q.text=`${Math.max(a,b)} - ${Math.min(a,b)} = ?`; q.answer=Math.abs(a-b); q.explanation = `Subtract smaller from larger.`; }
+  } else if(g<=6){
+    const a=rnd(2,20*df), b=rnd(2,12*df);
+    const r=Math.random();
+    if(r<0.4){ q.text=`${a} × ${b} = ?`; q.answer=a*b; q.explanation = `Multiply ${a} by ${b}.`;}
+    else if(r<0.8){ q.text=`${a} + ${b} = ?`; q.answer=a+b; q.explanation = `Add them together.`;}
+    else{ q.text=`${a} ÷ ${b} = ? (round to 2dp)`; q.answer=parseFloat((a/b).toFixed(2)); q.explanation = `Divide and round to 2 decimals.`; }
+  } else {
+    const a=rnd(10,150*df), b=rnd(2,20*df);
+    if(Math.random()<0.5){ const c=rnd(1,6); q.text=`${a} - ${b} × ${c} = ? (multiply first)`; q.answer=a - (b*c); q.explanation=`Multiply ${b}×${c} then subtract.`;}
+    else{ q.text=`${a} ÷ ${b} = ? (round to 2dp)`; q.answer=parseFloat((a/b).toFixed(2)); q.explanation=`Divide and round to 2 decimals.`; }
+  }
+  // build choices
+  const correct = q.answer;
+  let set = new Set([correct]);
+  while(set.size < 4){
+    let offset = Math.max(1, Math.round(Math.abs(correct)*(Math.random()*0.5+0.05)));
+    if(Math.random()<0.5) offset = -offset;
+    let v = correct + offset;
+    if(!Number.isInteger(correct)) v = +v.toFixed(2);
+    set.add(v);
+  }
+  q.choices = Array.from(set).sort(()=>Math.random()-0.5);
+  q.hint = generateHint(q.text, q.answer);
+  return q;
+}
+function generateHint(text, answer){
+  // Very small hint generator — can be improved per question type
+  if(text.includes('+')) return 'Try breaking numbers into smaller parts then add.';
+  if(text.includes('×') || text.includes('×')) return 'Multiply the two numbers — try times table.';
+  if(text.includes('÷')) return 'Division — see how many times divisor fits into dividend.';
+  if(text.includes('^')||text.includes('square')||text.includes('²')) return 'Square the number: multiply it by itself.';
+  if(text.includes('-')) return 'Subtract smaller from larger or do left-to-right with operations.';
+  return 'Think step-by-step and check your calculations.';
+}
+
+/* Render quiz UI */
+function renderQuizUI(){
+  const area = document.getElementById('quizArea'); area.innerHTML='';
+  if(!quizState){ area.innerHTML='<div class="small">No quiz running.</div>'; return; }
+  const q = quizState.questions[quizState.index];
+  document.getElementById('quizStatus').textContent = `Q ${quizState.index+1}/${quizState.total} • Score ${quizState.correct}`;
+  const header = document.createElement('div'); header.style.display='flex'; header.style.justifyContent='space-between';
+  header.innerHTML = `<div><strong>Q ${quizState.index+1} / ${quizState.total}</strong></div><div class="small">Correct: ${quizState.correct}</div>`;
+  area.appendChild(header);
+  const qel = document.createElement('div'); qel.className='quiz-question'; qel.textContent = q.text; area.appendChild(qel);
+  // options
+  const opts = document.createElement('div'); opts.className='options';
+  q.choices.forEach(choice=>{
+    const b = document.createElement('button'); b.className='option-btn'; b.textContent = choice;
+    b.onclick = ()=> onOptionSelected(choice, b);
+    opts.appendChild(b);
+  });
+  area.appendChild(opts);
+  // hint text
+  document.getElementById('quizHintText').textContent = '';
+}
+function onOptionSelected(choice, btn){
+  const q = quizState.questions[quizState.index];
+  if(choice === q.answer || compare(choice, q.answer)){
+    btn.classList.add('correct'); playTone('correct'); quizState.correct++; app.coins=(app.coins||0)+2; save(); renderHeaderStats();
+    // short celebration
+    setTimeout(()=>{ if(quizState.index < quizState.total-1){ quizState.index++; renderQuizUI(); } else finishQuiz(true); },700);
+  } else {
+    // wrong: show learn popup (correct answer + explanation)
+    playTone('wrong'); // buzz
+    storeMistake(q);
+    showWrongPopup(q, choice);
+    // do NOT deduct heart yet; deduct when user clicks Continue in popup
+  }
+}
+
+/* compare numbers/strings with decimal tolerance */
+function compare(a,b){ const an = (typeof a==='string' && a.indexOf('.')>=0)? parseFloat(a): Number(a); if(typeof b==='number' && !Number.isInteger(b)) return Math.abs(an-b) < 0.02; return Number(an) === Number(b); }
+
+/* store mistake */
+function storeMistake(q){
+  app.mistakes = app.mistakes || [];
+  // store minimal info
+  app.mistakes.push({ time: new Date().toISOString(), text: q.text, correct: q.answer, choices: q.choices.slice(), explanation: q.explanation, diff: q.diff });
+  save(); renderMistakes();
+}
+
+/* show wrong popup */
+function showWrongPopup(q, selected){
+  const popup = document.getElementById('feedbackPopup'), box = document.getElementById('feedbackBox');
+  box.innerHTML = `<h3>❌ Not quite</h3><div class="small">You chose: <strong>${selected}</strong></div>
+    <div class="explain"><strong>Correct:</strong> ${q.answer}</div>
+    <div class="explain" style="margin-top:8px">${q.explanation || q.hint || 'Review the steps.'}</div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center">
+      <button class="btn" id="retryBtn">Retry</button>
+      <button class="btn secondary" id="contBtn">Continue (Lose 1 heart)</button>
+    </div>`;
+  popup.style.display='flex';
+  document.getElementById('retryBtn').onclick = ()=>{ popup.style.display='none'; retryQuestion(); };
+  document.getElementById('contBtn').onclick = ()=>{ popup.style.display='none'; deductHeartAndContinue(); };
+}
+
+/* retry: reshuffle current question choices and let them try again */
+function retryQuestion(){
+  const q = quizState.questions[quizState.index];
+  q.choices = q.choices.sort(()=>Math.random()-0.5);
+  renderQuizUI();
+}
+
+/* deduct heart and continue to next */
+function deductHeartAndContinue(){
+  app.hearts = Math.max(0, (app.hearts||5) - 1);
+  save(); renderHeaderStats(); playTone('loseHeart');
+  if(app.hearts <= 0){
+    // quiz ends - fail
+    finishQuiz(false);
+  } else {
+    // move to next
+    if(quizState.index < quizState.total-1){ quizState.index++; renderQuizUI(); }
+    else finishQuiz(true);
+  }
+}
+
+/* show correct popup (used when finishing maybe) */
+function showCorrectPopup(msg){
+  const popup = document.getElementById('feedbackPopup'), box = document.getElementById('feedbackBox');
+  box.innerHTML = `<h3>✅ ${msg || 'Correct!'}</h3><div style="margin-top:8px"><button class="btn" onclick="document.getElementById('feedbackPopup').style.display='none'">OK</button></div>`;
+  popup.style.display='flex';
+}
+
+/* finish quiz */
+function finishQuiz(passed){
+  const area = document.getElementById('quizArea'); area.innerHTML='';
+  const total = quizState.total; const correct = quizState.correct; const percent = Math.round(correct/total*100);
+  const res = document.createElement('div'); res.innerHTML = `<h3>Result: ${correct}/${total} (${percent}%)</h3>`; area.appendChild(res);
+  if(passed && percent>=70){
+    app.coins = (app.coins||0)+10; app.achievements.push(`Passed ${total}-Q quiz (G${quizState.grade} ${quizState.diff})`); awardCertificate(app.user?.name || 'Student', `Grade ${quizState.grade} - ${quizState.diff} (${total} Q)`); confettiBurst(); toast('Passed! +10 coins');
+  } else {
+    // failed
+    toast('Quiz ended. Keep practicing!');
+  }
+  save(); renderHeaderStats(); renderAchievements();
+  quizState = null;
+  document.getElementById('quizStatus').textContent = '';
+}
+
+/* start quiz */
+document.getElementById('startQuiz').addEventListener('click', ()=>{
+  if(!app.user){ alert('Please save profile first'); showSection('profile'); return; }
+  const grade = document.getElementById('quizGrade').value;
+  const chapter = document.getElementById('quizChapter').value;
+  const diff = document.getElementById('quizDiff').value;
+  const total = Number(document.getElementById('quizNumber').value);
+  quizState = { grade, chapter, diff, total, index:0, correct:0, questions:[] };
+  for(let i=0;i<total;i++) quizState.questions.push(genQuestion(grade,diff,chapter));
+  app.hearts = 5; save(); renderHeaderStats();
+  renderQuizUI(); showSection('quiz');
+});
+
+/* hint button */
+document.getElementById('hintBtn').addEventListener('click', ()=>{
+  if(!quizState) return;
+  const q = quizState.questions[quizState.index];
+  document.getElementById('quizHintText').textContent = q.hint || 'Think step-by-step.';
+  // small visual hint box
+});
+
+/* helper to start chapter practice quickly */
+function startChapterQuiz(grade, chIndex){
+  document.getElementById('quizGrade').value = grade;
+  updateQuizChapterOptions(); 
+  document.getElementById('quizChapter').value = chIndex || '';
+  showSection('quiz');
+}
+
+/* update quiz chapter options when grade changes */
+function updateQuizChapterOptions(){
+  const g = document.getElementById('quizGrade').value || app.user?.grade || '1';
+  const ch = document.getElementById('quizChapter'); ch.innerHTML = '<option value="">Any</option>';
+  (SAMPLE_SYLLABUS[g] || []).forEach((t,i)=> ch.insertAdjacentHTML('beforeend', `<option value="${i}">${t}</option>`));
+  (app.customChapters[g] || []).forEach((t,i)=> ch.insertAdjacentHTML('beforeend', `<option value="c-${i}">${t} (custom)</option>`));
+}
+
+/* ===== PRACTICE TOPICS (as earlier) ===== */
+const practiceTopics = [
+  {key:'tables', title:'Multiplication Tables', desc:'Practice tables 1–20'},
+  {key:'squares', title:'Squares', desc:'Square numbers'},
+  {key:'cubes', title:'Cubes', desc:'Cube numbers'},
+  {key:'add', title:'Addition', desc:'Add quickly'},
+  {key:'sub', title:'Subtraction', desc:'Subtract quickly'},
+  {key:'mult', title:'Multiplication', desc:'Multiply fast'},
+  {key:'div', title:'Division', desc:'Division practice'},
+  {key:'speed', title:'Speed Math', desc:'Timed challenges'}
+];
+const topicsContainer = document.getElementById('practiceTopics');
+practiceTopics.forEach(t=>{
+  const tile = document.createElement('div'); tile.className='practice-tile';
+  tile.innerHTML = `<div style="font-weight:800">${t.title}</div><div class="small">${t.desc}</div>`;
+  tile.onclick = ()=> openPractice(t.key);
+  topicsContainer.appendChild(tile);
+});
+
+function openPractice(key){
+  const box = document.getElementById('practiceBox'); box.innerHTML='';
+  if(key==='tables') renderTablesPractice(box);
+  else if(key==='squares') renderSquaresPractice(box);
+  else if(key==='cubes') renderCubesPractice(box);
+  else if(key==='speed') renderSpeedChallenge(box);
+  else renderGenericPractice(box,key);
+}
+function renderTablesPractice(box){
+  box.innerHTML = `<h4>Multiplication Tables</h4><div class="small">Choose a table to practice</div>`;
+  const grid = document.createElement('div'); grid.className='practice-grid'; grid.style.marginTop='8px';
+  for(let i=1;i<=20;i++){ const t=document.createElement('div'); t.className='practice-tile'; t.textContent = `Table ${i}`; t.onclick=()=> runTableGame(i); grid.appendChild(t); }
+  box.appendChild(grid);
+}
+function runTableGame(n){
+  const box = document.getElementById('practiceBox'); box.innerHTML=`<h4>Table ${n} — 10 questions</h4><div id="tableGame"></div>`;
+  let idx=0, correct=0;
+  function next(){ if(idx>=10){ box.innerHTML += `<div class="small">Result ${correct}/10 — Earned ${Math.floor(correct/2)} coins</div>`; app.coins += Math.floor(correct/2); save(); renderHeaderStats(); return; }
+    const a = n, b = Math.floor(Math.random()*12)+1; const ans = a*b;
+    const container = document.getElementById('tableGame'); container.innerHTML = `<div class="quiz-question">${a} × ${b} = ?</div><input id="tableAns" placeholder="Answer" style="padding:8px;border-radius:8px;border:1px solid #e6eef8"/><div style="margin-top:8px"><button class="btn">Submit</button></div>`;
+    container.querySelector('button').onclick = ()=>{ const v = Number(document.getElementById('tableAns').value); if(v===ans){ correct++; toast('Good!'); } else toast('Try next'); idx++; next(); } };
+  next();
+}
+function renderSquaresPractice(box){
+  box.innerHTML = `<h4>Squares Practice</h4><div id="sqBox"></div>`;
+  let idx=0, correct=0;
+  function next(){ if(idx>=8){ box.innerHTML += `<div class="small">Result ${correct}/8 — Earned ${Math.floor(correct/2)} coins</div>`; app.coins += Math.floor(correct/2); save(); renderHeaderStats(); return; }
+    const n = Math.floor(Math.random()*30)+1; const ans = n*n;
+    const cont = document.getElementById('sqBox'); cont.innerHTML = `<div class="quiz-question">${n}² = ?</div><input id="sqAns" placeholder="Answer"/><div style="margin-top:8px"><button class="btn">Submit</button></div>`;
+    cont.querySelector('button').onclick = ()=>{ const v = Number(document.getElementById('sqAns').value); if(v===ans){ correct++; toast('Nice'); } idx++; next(); };
+  } next();
+}
+function renderCubesPractice(box){
+  box.innerHTML = `<h4>Cubes Practice</h4><div id="cbBox"></div>`;
+  let idx=0, correct=0;
+  function next(){ if(idx>=6){ box.innerHTML += `<div class="small">Result ${correct}/6 — Earned ${Math.floor(correct/2)} coins</div>`; app.coins += Math.floor(correct/2); save(); renderHeaderStats(); return; }
+    const n = Math.floor(Math.random()*12)+1; const ans = n*n*n;
+    const cont = document.getElementById('cbBox'); cont.innerHTML = `<div class="quiz-question">${n}³ = ?</div><input id="cbAns" placeholder="Answer"/><div style="margin-top:8px"><button class="btn">Submit</button></div>`;
+    cont.querySelector('button').onclick = ()=>{ const v = Number(document.getElementById('cbAns').value); if(v===ans){ correct++; toast('Great'); } idx++; next(); };
+  } next();
+}
+function renderGenericPractice(box,key){
+  box.innerHTML = `<h4>${key.toUpperCase()} Practice</h4><div id="gBox"></div>`;
+  let idx=0, correct=0;
+  function next(){
+    if(idx>=8){ box.innerHTML += `<div class="small">Result ${correct}/8 — Earned ${Math.floor(correct/2)} coins</div>`; app.coins += Math.floor(correct/2); save(); renderHeaderStats(); return; }
+    const a = Math.floor(Math.random()*50)+1, b = Math.floor(Math.random()*50)+1;
+    let op = '+', ans = a+b;
+    if(key==='sub'){ op='-'; ans = a - b; }
+    if(key==='mult'){ op='×'; ans = a * b; }
+    if(key==='div'){ op='÷'; ans = Number((a / (b||1)).toFixed(2)); }
+    document.getElementById('gBox').innerHTML = `<div class="quiz-question">${a} ${op} ${b} = ?</div><input id="gAns"/><div style="margin-top:8px"><button class="btn">Submit</button></div>`;
+    document.querySelector('#gBox button').onclick = ()=>{ const v = Number(document.getElementById('gAns').value); if(compare(v,ans)){ correct++; toast('Nice'); } idx++; next(); };
+  } next();
+}
+function renderSpeedChallenge(box){
+  box.innerHTML = `<h4>Speed Math — 20s</h4><div id="speedBox"></div>`;
+  let time = 20, score = 0;
+  const tdiv = document.getElementById('speedBox'); tdiv.innerHTML = `<div class="small">Time: <span id="spTime">${time}</span>s • Score: <span id="spScore">0</span></div><div id="spQ"></div>`;
+  const timer = setInterval(()=>{ time--; document.getElementById('spTime').textContent = time; if(time<=0){ clearInterval(timer); document.getElementById('spQ').innerHTML = `<div class="small">Time up! Score: ${score}</div>`; app.coins += Math.floor(score/3); save(); renderHeaderStats(); } },1000);
+  function next(){ const a= Math.floor(Math.random()*20)+1, b = Math.floor(Math.random()*12)+1; const ans = a*b; document.getElementById('spQ').innerHTML = `<div class="quiz-question">${a} × ${b} = ?</div><input id="spAns"/><div style="margin-top:6px"><button class="btn">Submit</button></div>`; document.querySelector('#spQ button').onclick = ()=>{ const v=Number(document.getElementById('spAns').value); if(v===ans){ score++; document.getElementById('spScore').textContent = score; } next(); }; } next();
+}
+
+/* ====== REWARDS ====== */
+const REWARDS = { rdsharma:50, rsag:50, scim:180, adv:220, grav:200, ws:120 };
+document.querySelectorAll('.redeem').forEach(b=> b.addEventListener('click', ()=>{
+  const key = b.dataset.key; const cost = REWARDS[key];
+  if(app.coins >= cost){ app.coins -= cost; app.achievements.push(`Redeemed ${key}`); save(); renderHeaderStats(); renderAchievements(); document.getElementById('redeemMsg').textContent='Redeemed! (demo)'; toast('Redeemed!'); }
+  else { document.getElementById('redeemMsg').textContent = `Need ${cost - (app.coins||0)} more coins`; toast('Not enough coins'); }
+  setTimeout(()=>document.getElementById('redeemMsg').textContent='',3500);
+}));
+
+document.getElementById('surpriseBtn').addEventListener('click', ()=>{
+  const r=Math.random();
+  if(r<0.6){ const c=Math.floor(Math.random()*25)+5; app.coins += c; save(); renderHeaderStats(); toast(`Surprise! +${c} coins`); }
+  else{ const b=['Star','Rocket','Smarty'][Math.floor(Math.random()*3)]; app.badges.push(b); app.achievements.push(`Surprise: ${b}`); save(); renderAchievements(); toast('You got a surprise badge!'); }
+});
+
+/* ====== ACHIEVEMENTS & MISTAKES ====== */
+function renderAchievements(){
+  const grid = document.getElementById('achGrid'); grid.innerHTML=''; const set = Array.from(new Set(app.achievements||[]));
+  if(set.length===0) grid.innerHTML = '<div class="small">No achievements yet</div>';
+  set.forEach(a=>{ const d=document.createElement('div'); d.className='badge'; d.textContent = a; grid.appendChild(d); });
+  (app.badges||[]).forEach(b=>{ const d=document.createElement('div'); d.className='badge'; d.textContent='Badge: ' + b; grid.appendChild(d); });
+  renderMistakes();
+}
+function renderMistakes(){
+  const ml = document.getElementById('mistakesList'); ml.innerHTML=''; (app.mistakes||[]).forEach((m,i)=>{ const d=document.createElement('div'); d.className='chapter'; d.innerHTML = `<div><strong>${m.text}</strong><div class="small meta">Correct: ${m.correct} • ${new Date(m.time).toLocaleString()}</div><div class="small" style="margin-top:6px">${m.explanation || ''}</div></div><div style="display:flex;flex-direction:column;gap:8px"><button class="btn secondary" onclick="replayMistake(${i})">Retry</button><button class="btn" onclick="removeMistake(${i})">Remove</button></div>`; ml.appendChild(d); }); 
+}
+function replayMistake(idx){
+  const m = app.mistakes[idx]; if(!m) return; quizState = { grade: app.user?.grade || '1', chapter:'', diff: m.diff||'easy', total:1, index:0, correct:0, questions:[] }; const q = { text:m.text, answer:m.correct, choices:m.choices, explanation:m.explanation, diff:m.diff }; quizState.questions.push(q); showSection('quiz'); renderQuizUI();
+}
+function removeMistake(idx){ if(confirm('Remove this mistake?')){ app.mistakes.splice(idx,1); save(); renderMistakes(); toast('Removed'); } }
+document.getElementById('reviseMistakesBtn').addEventListener('click', ()=>{
+  if(!(app.mistakes && app.mistakes.length)) { alert('No mistakes to revise'); return; }
+  // create quizState with only wrong questions
+  quizState = { grade: app.user?.grade||'1', chapter:'', diff:'easy', total: app.mistakes.length, index:0, correct:0, questions: [] };
+  app.mistakes.forEach(m=> quizState.questions.push({ text:m.text, answer:m.correct, choices:m.choices, explanation:m.explanation, diff:m.diff }));
+  showSection('quiz'); renderQuizUI();
+});
+
+/* ===== CERTIFICATES ===== */
+function awardCertificate(name, stage){
+  app.achievements.push(`Certificate: ${stage}`); app.badges.push(stage); save();
+  document.getElementById('certName').textContent = name || 'Student';
+  document.getElementById('certFor').textContent = stage;
+  renderAchievements();
+  showSection('certificate');
+}
+document.getElementById('downloadCertBtn').addEventListener('click', ()=>{
+  const name=document.getElementById('certName').textContent||'Student';
+  const stage=document.getElementById('certFor').textContent||'Achievement';
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'><rect width='100%' height='100%' fill='#fff'/><text x='50%' y='30%' dominant-baseline='middle' text-anchor='middle' font-size='36' font-family='Arial' fill='#333'>Certificate of Achievement</text><text x='50%' y='46%' dominant-baseline='middle' text-anchor='middle' font-size='28' font-family='Arial' fill='#333'>Awarded to</text><text x='50%' y='56%' dominant-baseline='middle' text-anchor='middle' font-size='32' font-family='Arial' fill='#111'>${name}</text><text x='50%' y='68%' dominant-baseline='middle' text-anchor='middle' font-size='20' font-family='Arial' fill='#333'>For: ${stage}</text></svg>`;
+  const blob=new Blob([svg],{type:'image/svg+xml'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`certificate-${name.replace(/\s+/g,'_')}.svg`; a.click(); URL.revokeObjectURL(url);
+});
+
+/* ===== CONFETTI ===== */
+function confettiBurst(){
+  const layer = document.getElementById('confettiLayer'); for(let i=0;i<60;i++){
+    const el = document.createElement('div'); el.className='confetti-piece'; el.style.left = Math.random()*100 + '%'; el.style.top = '-10%';
+    el.style.background = ['#ff5f6d','#ffb46b','#6ee7b7','#6fb3ff','#d7b3ff'][Math.floor(Math.random()*5)];
+    el.style.width = (8+Math.random()*8)+'px'; el.style.height = (10+Math.random()*12)+'px';
+    layer.appendChild(el);
+    const fall = 2000 + Math.random()*2200;
+    el.animate([{transform:'translateY(0) rotate(0)'},{transform:`translateY(${window.innerHeight+200}px) rotate(${Math.random()*720}deg)`}],{duration:fall,easing:'linear'});
+    setTimeout(()=> el.remove(), fall+50);
+  }
+}
+
+/* ===== SOUND EFFECTS via WebAudio ===== */
+let audioCtx = null;
+function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function playTone(type){
+  ensureAudio();
+  const t = audioCtx;
+  const o = t.createOscillator(), g = t.createGain();
+  o.connect(g); g.connect(t.destination);
+  if(type==='correct'){ o.type='sine'; o.frequency.value = 880; g.gain.value = 0.05; o.start(); setTimeout(()=>{ o.stop(); },150); }
+  else if(type==='wrong'){ o.type='square'; o.frequency.value = 220; g.gain.value = 0.08; o.start(); setTimeout(()=>{ o.stop(); },220); }
+  else if(type==='loseHeart'){ o.type='sawtooth'; o.frequency.value=160; g.gain.value=0.08; o.start(); setTimeout(()=>{ o.stop(); },300); }
+}
+
+/* ===== GAMES: simple block click game with time limit & lock ===== */
+let gameTimer = null, gameTimeLeft = 0, gameInterval = null;
+const gameArea = document.getElementById('gameArea'), gameHUD = document.getElementById('gameHUD');
+let gameScore = 0, gameActive=false;
+document.getElementById('startGameBtn').addEventListener('click', startGameSession);
+document.getElementById('stopGameBtn').addEventListener('click', stopGameSession);
+
+function startGameSession(){
+  if(!app.user){ alert('Please save profile first'); showSection('profile'); return; }
+  if(app.gamePlayedOnce && app.chaptersDone===0){ // lock until chapter completed
+    alert('Game replay locked — complete one chapter to play again.');
+    return;
+  }
+  const minutes = Number(document.getElementById('gameLength').value || 10);
+  gameTimeLeft = minutes * 60;
+  gameScore = 0; gameActive = true; gameHUD.innerHTML = `Score: 0 • Time: ${formatTime(gameTimeLeft)}`;
+  // start spawn loop
+  spawnBlock();
+  gameInterval = setInterval(()=>{ gameTimeLeft--; gameHUD.innerHTML = `Score: ${gameScore} • Time: ${formatTime(gameTimeLeft)}`; if(gameTimeLeft<=0){ stopGameSession(true); } },1000);
+  // mark that player used game session at least once
+  app.gamePlayedOnce = true; save();
+  document.getElementById('gameMsg').textContent = 'Game running — click blocks to collect points!';
+}
+
+function stopGameSession(auto=false){
+  gameActive = false; clearInterval(gameInterval);
+  // remove blocks
+  Array.from(document.querySelectorAll('.block')).forEach(b=>b.remove());
+  const earned = Math.floor(gameScore/5);
+  app.coins = (app.coins||0) + earned;
+  toast(`Game over! Score ${gameScore}. Earned ${earned} coins`);
+  // Lock replay if they haven't completed any chapter yet (require at least 1 chapter to play again)
+  if(app.chaptersDone === 0){ app.gamePlayedOnce = true; document.getElementById('gameMsg').textContent = 'Complete a chapter to unlock more game time.'; } else { document.getElementById('gameMsg').textContent = 'You can play again after completing another chapter.'; }
+  save(); renderHeaderStats();
+}
+
+function spawnBlock(){
+  if(!gameActive) return;
+  const block = document.createElement('div'); block.className='block';
+  const area = gameArea.getBoundingClientRect();
+  const x = Math.random() * (area.width - 60); const y = Math.random() * (area.height - 60);
+  block.style.left = x + 'px'; block.style.top = y + 'px';
+  block.textContent = Math.floor(Math.random()*9)+1;
+  block.onclick = ()=>{ gameScore += Number(block.textContent); block.remove(); playTone('correct'); };
+  gameArea.appendChild(block);
+  // spawn another after random short delay
+  setTimeout(()=>{ if(gameActive) spawnBlock(); }, 700 + Math.random()*1200);
+}
+
+/* utils */
+function formatTime(sec){ const m = Math.floor(sec/60); const s = sec%60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+
+/* ===== INIT / HOOKS ===== */
+function populateQuizChapters(){ updateQuizChapterOptions(); }
+populateQuizChapters();
+
+/* initial renders */
+function renderInit(){
+  renderProfile(); renderHeaderStats(); renderChapters(); renderAchievements();
+  // default navigation
+  if(!app.user) showSection('profile'); else showSection('home');
+}
+renderInit();
+
+/* make sure some selects reflect user grade */
+document.getElementById('homeGrade').value = app.user?.grade || '1';
+document.getElementById('syllGradeSelect').value = app.user?.grade || '1';
+document.getElementById('quizGrade').value = app.user?.grade || '1';
+updateQuizChapterOptions();
+
+/* ===== Mistake & Revise helpers already included above ===== */
+
+/* ===== finishing touches ===== */
+function updateQuizChapterOptions(){ /* to satisfy earlier calls */ const sel = document.getElementById('quizGrade'); if(sel) { /* already bound */ } }
+
+/* expose functions for inline use where needed */
+window.completeChapter = completeChapter;
+window.startChapterQuiz = startChapterQuiz;
+window.completeCustomChapter = completeCustomChapter;
+window.replayMistake = replayMistake;
+window.removeMistake = removeMistake;
+
+/* light auto-save on visibility change */
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') save(); });
+
+</script>
+</body>
+</html>
